@@ -1,0 +1,27 @@
+//@version=5
+// ATR Trailing Stop (demo). The TradingView source for the Python and MQL5 ports in this repo.
+// Written for conversion examples; not a trading recommendation.
+indicator("ATR Trailing Stop (demo)", overlay = true)
+
+atrLen = input.int(14, "ATR length", minval = 1)
+mult   = input.float(3.0, "ATR multiplier", minval = 0.1, step = 0.1)
+
+// Simple average of true range (matches MT5's iATR, unlike ta.atr which uses RMA)
+nLoss = mult * ta.sma(ta.tr(true), atrLen)
+src   = close
+
+var float stop = na
+prevStop = nz(stop[1], src)
+
+stop := src > prevStop and src[1] > prevStop ? math.max(prevStop, src - nLoss) :
+        src < prevStop and src[1] < prevStop ? math.min(prevStop, src + nLoss) :
+        src > prevStop                       ? src - nLoss : src + nLoss
+
+buy  = ta.crossover(src, stop)
+sell = ta.crossunder(src, stop)
+
+plot(stop, "Trailing stop", color = src > stop ? color.green : color.red, linewidth = 2)
+plotshape(buy,  "Buy",  shape.triangleup,   location.belowbar, color.green, size = size.small)
+plotshape(sell, "Sell", shape.triangledown, location.abovebar, color.red,   size = size.small)
+alertcondition(buy,  "ATR stop: buy",  "Close crossed above the trailing stop")
+alertcondition(sell, "ATR stop: sell", "Close crossed below the trailing stop")

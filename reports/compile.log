@@ -1,0 +1,4 @@
+﻿MetaEditor compile results (paths omitted)
+
+mql5\ATR_Trailing_Stop.mq5 -> Result: 0 errors, 0 warnings, 750 ms elapsed, cpu='X64 Regular'
+mql5\Export_ATRStop_Values.mq5 -> Result: 0 errors, 0 warnings, 795 ms elapsed, cpu='X64 Regular'
